@@ -2,24 +2,21 @@ package com.example.springsecurity.security.config;
 
 import java.util.concurrent.TimeUnit;
 
+import com.example.springsecurity.auth.service.ApplicationUserService;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
-import static com.example.springsecurity.security.ApplicationUserRole.ADMIN;
 import static com.example.springsecurity.security.ApplicationUserRole.STUDENT;
-import static com.example.springsecurity.security.ApplicationUserRole.TRAINEE;
 
 /**
  *  This is the class configuring the basic auth
@@ -33,6 +30,7 @@ import static com.example.springsecurity.security.ApplicationUserRole.TRAINEE;
 public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final PasswordEncoder passwordEncoder;
+    private final ApplicationUserService applicationUserService;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -70,32 +68,16 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                     .logoutSuccessUrl("/login");
     }
 
-    /**
-     *  TThis method is used to override the encoding
-     *
-     */
     @Override
-    @Bean
-    protected UserDetailsService userDetailsService() {
-        final UserDetails ushamah = User.builder()
-                .username("ush")
-                .password(passwordEncoder.encode("student"))
-                //.roles(STUDENT.name()) //ROLE_STUDENT
-                .authorities(STUDENT.getGrantedAuthorities())
-                .build();
-        final UserDetails refia = User.builder()
-                .username("ref")
-                .password(passwordEncoder.encode("admin"))
-                //.roles(ApplicationUserRole.ADMIN.name()) //ROLE_ADMIN
-                .authorities(ADMIN.getGrantedAuthorities())
-                .build();
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.authenticationProvider(daoAuthenticationProvider());
+    }
 
-        final UserDetails tom = User.builder()
-                .username("tom")
-                .password(passwordEncoder.encode("trainee"))
-                //.roles(TRAINEE.name()) //ROLE_TRAINEE
-                .authorities(TRAINEE.getGrantedAuthorities())
-                .build();
-        return new InMemoryUserDetailsManager(ushamah, refia, tom);
+    @Bean
+    public DaoAuthenticationProvider daoAuthenticationProvider(){
+        final DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setPasswordEncoder(passwordEncoder);
+        provider.setUserDetailsService(applicationUserService);
+        return provider;
     }
 }

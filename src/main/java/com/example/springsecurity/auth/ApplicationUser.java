@@ -1,7 +1,6 @@
 package com.example.springsecurity.auth;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 
 import lombok.Builder;
