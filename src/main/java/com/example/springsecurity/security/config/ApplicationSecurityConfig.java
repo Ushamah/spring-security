@@ -15,6 +15,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import static com.example.springsecurity.security.ApplicationUserRole.ADMIN;
 import static com.example.springsecurity.security.ApplicationUserRole.STUDENT;
@@ -50,13 +51,23 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticated()
                 .and()
                 .formLogin()//for enabling form login
-                .loginPage("/login")//for customizing the login page
-                .permitAll()
-                .defaultSuccessUrl("/courses", true)
+                    .loginPage("/login")//for customizing the login page
+                    .permitAll()
+                    .defaultSuccessUrl("/courses", true)
+                    .passwordParameter("password") //association with the parameter name in the html
+                    .usernameParameter("username") //association with the parameter name in the html
                 .and()
                 .rememberMe()
-                .tokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(21))//Remember me token validity period extension
-                .key("somethingVerySecure");
+                    .tokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(21))//Remember me token validity period extension
+                    .key("somethingVerySecure")
+                    .rememberMeParameter("remember-me")//association with the parameter name in the html
+                .and()
+                .logout()
+                    .logoutUrl("/logout")
+                    .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET"))
+                    .clearAuthentication(true)
+                    .deleteCookies("JSESSIONID", "remember-me")
+                    .logoutSuccessUrl("/login");
     }
 
     /**
