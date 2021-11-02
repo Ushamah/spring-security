@@ -20,7 +20,8 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
- *  This class verifies the credentials sent by user when making a request
+ * This class verifies the credentials sent by user when making a request.
+ * Normally a request goes through numerous filters until it can be granted access to the resource (API, DB, etc.)
  *
  */
 @RequiredArgsConstructor
@@ -28,6 +29,9 @@ public class JwtUsernamePasswordAuthFilter extends UsernamePasswordAuthenticatio
 
     private final AuthenticationManager authenticationManager;
 
+    /**
+     * This method is the first filter the request goes through
+     */
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
             throws AuthenticationException {
@@ -45,12 +49,16 @@ public class JwtUsernamePasswordAuthFilter extends UsernamePasswordAuthenticatio
         }
     }
 
+    /**
+     * This method is the second filter the request goes through
+     */
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
             Authentication authResult) throws IOException, ServletException {
 
         final java.sql.Date afterTwoWeeks = java.sql.Date.valueOf(LocalDate.now().plusWeeks(2));
         final String key = "aVeryLongAndSecureKeyWithNumbersLike(0986545223)AndCharactersAndSpecialCharactersLike{+*!%&$§}";
+
         final String token = Jwts.builder()
                 .setSubject(authResult.getName())
                 .claim("authorities", authResult.getAuthorities())

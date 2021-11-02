@@ -15,3 +15,9 @@ A visitor clicks on the link, inadvertently sending the request to the website.
 
 #### Step 4:
 The website validates the request and transfers funds from the visitor from the visitor's account to the perpetrator.
+
+## Another way of configuring AntMatchers
+- antMatchers(HttpMethod.DELETE, "/management/api/**").hasAuthority(COURSE_WRITE.getPermission())
+- antMatchers(HttpMethod.POST, "/management/api/**").hasAuthority(COURSE_WRITE.getPermission())
+- antMatchers(HttpMethod.PUT, "/management/api/**").hasAuthority(COURSE_WRITE.getPermission())
+- antMatchers("/management/api/**").hasAnyRole(ADMIN.name(), TRAINEE.name())
