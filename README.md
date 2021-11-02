@@ -1,5 +1,7 @@
 #Links 
-https://www.youtube.com/watch?v=her_7pa0vrg&t=3963s&ab_channel=Amigoscode
+- https://www.youtube.com/watch?v=her_7pa0vrg&t=3963s&ab_channel=Amigoscode
+- https://jwt.io/
+- https://github.com/jwtk/jjwt
 
 ## Cross Site Request Forgery
 The action of forging a copy of a document, signature, banknote, or work of art.

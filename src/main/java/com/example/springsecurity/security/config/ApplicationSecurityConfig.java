@@ -1,8 +1,7 @@
 package com.example.springsecurity.security.config;
 
-import java.util.concurrent.TimeUnit;
-
 import com.example.springsecurity.auth.service.ApplicationUserService;
+import com.example.springsecurity.jwt.JwtTokenVerifier;
 import com.example.springsecurity.jwt.JwtUsernamePasswordAuthFilter;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +16,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import static com.example.springsecurity.security.ApplicationUserRole.STUDENT;
 
@@ -47,7 +45,8 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement()
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS) //Stateless session config
                 .and()
-                .addFilter(new JwtUsernamePasswordAuthFilter(authenticationManager)) //adding jwt
+                .addFilter(new JwtUsernamePasswordAuthFilter(authenticationManager))//registering JwtUsernamePasswordAuthFilter
+                .addFilterAfter(new JwtTokenVerifier(), JwtUsernamePasswordAuthFilter.class)//registering JwtTokenVerifier afterwards
                 .authorizeRequests()
                 .antMatchers("/", "index", "/css/*", "/js/*").permitAll()
                 .antMatchers("/api/**").hasRole(STUDENT.name())
