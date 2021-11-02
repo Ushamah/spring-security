@@ -1,4 +1,4 @@
-package com.example.springsecurity.data;
+package com.example.springsecurity.mock;
 
 import java.util.List;
 

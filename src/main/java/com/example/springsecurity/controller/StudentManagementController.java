@@ -2,7 +2,7 @@ package com.example.springsecurity.controller;
 
 import java.util.List;
 
-import com.example.springsecurity.data.MockStudentRepository;
+import com.example.springsecurity.mock.MockStudentRepository;
 import com.example.springsecurity.model.Student;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
