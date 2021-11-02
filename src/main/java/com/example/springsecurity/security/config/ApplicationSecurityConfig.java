@@ -1,5 +1,7 @@
 package com.example.springsecurity.security.config;
 
+import java.util.concurrent.TimeUnit;
+
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -47,7 +49,14 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest()
                 .authenticated()
                 .and()
-                .httpBasic();
+                .formLogin()//for enabling form login
+                .loginPage("/login")//for customizing the login page
+                .permitAll()
+                .defaultSuccessUrl("/courses", true)
+                .and()
+                .rememberMe()
+                .tokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(21))//Remember me token validity period extension
+                .key("somethingVerySecure");
     }
 
     /**
