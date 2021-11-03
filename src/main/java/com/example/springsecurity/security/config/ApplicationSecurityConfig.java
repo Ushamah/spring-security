@@ -1,6 +1,9 @@
 package com.example.springsecurity.security.config;
 
+import javax.crypto.SecretKey;
+
 import com.example.springsecurity.auth.service.ApplicationUserService;
+import com.example.springsecurity.jwt.JwtConfig;
 import com.example.springsecurity.jwt.JwtTokenVerifier;
 import com.example.springsecurity.jwt.JwtUsernamePasswordAuthFilter;
 import io.swagger.annotations.Api;
@@ -33,6 +36,8 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final PasswordEncoder passwordEncoder;
     private final ApplicationUserService applicationUserService;
+    private final JwtConfig jwtConfig;
+    private final SecretKey secretKey;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -45,8 +50,8 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement()
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS) //Stateless session config
                 .and()
-                .addFilter(new JwtUsernamePasswordAuthFilter(authenticationManager))//registering JwtUsernamePasswordAuthFilter
-                .addFilterAfter(new JwtTokenVerifier(), JwtUsernamePasswordAuthFilter.class)//registering JwtTokenVerifier afterwards
+                .addFilter(new JwtUsernamePasswordAuthFilter(authenticationManager,jwtConfig,secretKey))//registering JwtUsernamePasswordAuthFilter
+                .addFilterAfter(new JwtTokenVerifier(jwtConfig,secretKey), JwtUsernamePasswordAuthFilter.class)//registering JwtTokenVerifier afterwards
                 .authorizeRequests()
                 .antMatchers("/", "index", "/css/*", "/js/*").permitAll()
                 .antMatchers("/api/**").hasRole(STUDENT.name())
